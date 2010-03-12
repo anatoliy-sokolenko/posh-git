@@ -7,16 +7,12 @@ function Test-GitDirectory {
 
 function Get-GitBranch {
 	if (Test-GitDirectory) {
-		$headRef = (git symbolic-ref HEAD) 2> $null
-		if ($headRef) {
-			Split-Path -Leaf $headRef
-		}
+		getGitBranch
 	}
 }
 
 function Get-GitStatus {
-    if(Test-GitDirectory)
-    {
+    if (Test-GitDirectory) {
         $indexAdded = @()
         $indexModified = @()
         $indexDeleted = @()
@@ -35,7 +31,7 @@ function Get-GitStatus {
 
         if($grpIndex.A) { $indexAdded += $grpIndex.A | %{ $_.Path } }
         if($grpIndex.M) { $indexModified += $grpIndex.M | %{ $_.Path } }
-        if($grpIndex.R) { $indexModified += $grpIndex.R | %{ $_.Path } }
+        if($grpIndex.R) { $indexModified += $grpIndex.R | %{ $_.Path } } 
         if($grpIndex.D) { $indexDeleted += $grpIndex.D | %{ $_.Path } }
         if($grpFiles.M) { $filesModified += $grpFiles.M | %{ $_.Path } }
         if($grpFiles.R) { $filesModified += $grpFiles.R | %{ $_.Path } }
@@ -53,7 +49,7 @@ function Get-GitStatus {
         }
 
         $status = New-Object PSObject -Property @{
-            Branch          = Get-GitBranch
+            Branch          = getGitBranch
             AheadBy         = $aheadCount
             HasIndex        = [bool]$diffIndex
             Index           = $diffIndex | %{ $_.Path }
@@ -71,4 +67,11 @@ function Get-GitStatus {
         
         return $status
     }
+}
+
+function script:getGitBranch {
+    $headRef = (git symbolic-ref HEAD) 2> $null
+	if ($headRef) {
+		Split-Path -Leaf $headRef
+	}
 }
