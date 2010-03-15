@@ -75,3 +75,8 @@ function script:getGitBranch {
 		Split-Path -Leaf $headRef
 	}
 }
+
+function Enable-GitColors {
+	$env:TERM = 'cygwin'
+	$env:LESS = 'FRSX'
+}
